@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>副業タイプ診断 ✨</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+    background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 40%, #e8eaf6 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 480px;
+    animation: fadeIn 0.5s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ========== TOP CARD ========== */
+  .card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 32px 28px;
+    box-shadow: 0 8px 32px rgba(180,120,200,0.15);
+  }
+
+  /* ========== HEADER ========== */
+  .header-emoji { font-size: 48px; text-align: center; margin-bottom: 12px; }
+  .header-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #e040fb, #7c4dff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .header-sub {
+    text-align: center;
+    font-size: 13px;
+    color: #9e9e9e;
+    margin-bottom: 24px;
+  }
+
+  /* ========== PROGRESS ========== */
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #bdbdbd;
+    margin-bottom: 6px;
+  }
+  .progress-bar {
+    height: 6px;
+    background: #f3e5f5;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #e040fb, #7c4dff);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* ========== QUESTION ========== */
+  .question-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ce93d8;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .question-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: #37474f;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  /* ========== OPTIONS ========== */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #fafafa;
+    border: 2px solid #f3e5f5;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #37474f;
+    font-weight: 500;
+    text-align: left;
+    transition: all 0.18s ease;
+    width: 100%;
+    line-height: 1.4;
+  }
+  .option-btn:hover {
+    border-color: #ce93d8;
+    background: #fce4ec;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(206,147,216,0.2);
+  }
+  .option-btn:active { transform: translateY(0); }
+  .option-btn.selected {
+    border-color: #e040fb;
+    background: linear-gradient(135deg, #fce4ec, #f3e5f5);
+    box-shadow: 0 4px 16px rgba(224,64,251,0.2);
+  }
+  .option-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: center;
+  }
+
+  /* ========== START SCREEN ========== */
+  .start-screen { text-align: center; }
+  .start-screen .feature-list {
+    list-style: none;
+    margin: 20px 0 28px;
+    text-align: left;
+    display: inline-block;
+  }
+  .start-screen .feature-list li {
+    font-size: 14px;
+    color: #616161;
+    padding: 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .start-screen .feature-list li::before { content: '✨'; }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, #e040fb, #7c4dff);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: 99px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(124,77,255,0.35);
+    transition: all 0.2s ease;
+    width: 100%;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(124,77,255,0.45);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ========== RESULT SCREEN ========== */
+  .result-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+    background: linear-gradient(90deg, #e040fb, #7c4dff);
+    border-radius: 99px;
+    padding: 4px 14px;
+    margin-bottom: 10px;
+  }
+  .result-type-emoji { font-size: 56px; margin: 12px 0 8px; }
+  .result-type-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: #37474f;
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .result-type-sub {
+    font-size: 13px;
+    color: #9e9e9e;
+    margin-bottom: 20px;
+  }
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+    margin: 20px 0;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ce93d8;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .result-desc {
+    font-size: 14px;
+    color: #546e7a;
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+
+  .first-step {
+    background: linear-gradient(135deg, #fce4ec, #f3e5f5);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .first-step-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ad1457;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .first-step ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .first-step ul li {
+    font-size: 13px;
+    color: #546e7a;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.5;
+  }
+  .first-step ul li::before {
+    content: '→';
+    color: #e040fb;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+
+  /* Kindle link box */
+  .kindle-link-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #fff8e1, #fff3e0);
+    border: 2px solid #ffcc02;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    text-decoration: none;
+    transition: all 0.18s ease;
+    cursor: pointer;
+  }
+  .kindle-link-box:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(255,204,2,0.3);
+  }
+  .kindle-link-box .kindle-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e65100;
+    line-height: 1.4;
+  }
+  .kindle-link-box .kindle-text small {
+    display: block;
+    font-size: 11px;
+    color: #ff8f00;
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .kindle-link-box .kindle-arrow {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  /* Tags */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: #7c4dff;
+    background: #ede7f6;
+    border-radius: 99px;
+    padding: 4px 10px;
+  }
+
+  /* Retry */
+  .btn-retry {
+    width: 100%;
+    padding: 14px;
+    background: #fafafa;
+    border: 2px solid #e0e0e0;
+    border-radius: 99px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #9e9e9e;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    margin-top: 4px;
+  }
+  .btn-retry:hover {
+    border-color: #ce93d8;
+    color: #9c27b0;
+    background: #fce4ec;
+  }
+
+  /* Score bar */
+  .score-section { margin-bottom: 20px; }
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .score-type-name {
+    font-size: 11px;
+    color: #78909c;
+    width: 80px;
+    flex-shrink: 0;
+    line-height: 1.3;
+  }
+  .score-bar {
+    flex: 1;
+    height: 8px;
+    background: #f5f5f5;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #e040fb, #7c4dff);
+    border-radius: 99px;
+    transition: width 0.8s ease;
+  }
+  .score-pct {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9c27b0;
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* loading animation */
+  .loading {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .loading-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .loading-dots span {
+    width: 10px; height: 10px;
+    background: linear-gradient(135deg, #e040fb, #7c4dff);
+    border-radius: 50%;
+    animation: bounce 0.9s infinite ease-in-out;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+  }
+  .loading-text { font-size: 14px; color: #9e9e9e; }
+
+  /* Utility */
+  .text-center { text-align: center; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card" id="app"></div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const TYPES = {
+  A: {
+    id: 'A',
+    emoji: '📚',
+    name: 'Smart FIRE型',
+    sub: 'Kindle出版・ストック型収入タイプ',
+    tags: ['#ストック収入', '#Kindle出版', '#不労所得', '#コツコツ型'],
+    desc: 'あなたは一度作ったコンテンツが繰り返し収益を生む「ストック型」の副業が向いています。Kindle出版は初期コストほぼゼロで始められ、書いた本が24時間世界中で販売されます。文章でじっくり伝えることが得意な方に特におすすめ。忙しい日でも収入が積み上がる仕組みを作りましょう。',
+    steps: [
+      '書きたいテーマを1つ決めて目次を作る（30分でOK）',
+      'ChatGPTを活用しながら原稿を書き始める',
+      'Kindle ダイレクト・パブリッシング（KDP）に無料登録',
+      '表紙はCanvaで無料作成、まず1冊出版を目指す',
+    ],
+    kindle: true,
+  },
+  B: {
+    id: 'B',
+    emoji: '💼',
+    name: 'スキル販売型',
+    sub: 'ココナラ・クラウドワークスタイプ',
+    tags: ['#スキル販売', '#フリーランス', '#即収益化', '#専門スキル'],
+    desc: 'あなたはすでに持っているスキルや知識を直接マネタイズする副業が向いています。デザイン・ライティング・翻訳・プログラミング・相談業など、得意なことを「商品」にすれば最短で収益化が可能。クライアントとのやり取りを通じてスキルもさらに磨かれます。',
+    steps: [
+      '自分のスキルリストを紙に書き出す（何でもOK）',
+      'ココナラかクラウドワークスに無料登録',
+      '3,000〜5,000円の低単価サービスから出品して実績を作る',
+      '口コミが集まったら単価アップを目指す',
+    ],
+    kindle: false,
+  },
+  C: {
+    id: 'C',
+    emoji: '🎬',
+    name: 'コンテンツクリエイター型',
+    sub: 'YouTube・SNS発信タイプ',
+    tags: ['#YouTube', '#SNS発信', '#インフルエンサー', '#ブランディング'],
+    desc: 'あなたは発信力を活かして影響力を広げるコンテンツビジネスが向いています。YouTubeや InstagramなどのSNSで価値ある情報を発信し続けることでフォロワーを増やし、広告収入・案件・自分の商品販売へと展開できます。時間はかかりますが一度築いたブランドは強力な資産になります。',
+    steps: [
+      '発信テーマを1つ絞る（好き×得意×需要の交差点を探す）',
+      'TwitterかInstagramから始める（動画より文字の方が早い）',
+      '最初の30日間は毎日投稿を目標に習慣化する',
+      'フォロワー500人を目標にコメントへの返信を徹底する',
+    ],
+    kindle: false,
+  },
+  D: {
+    id: 'D',
+    emoji: '📈',
+    name: '堅実投資型',
+    sub: '積立NISA・高配当株タイプ',
+    tags: ['#投資', '#NISA', '#高配当株', '#資産形成', '#長期安定'],
+    desc: 'あなたはリスクを抑えながら資産を着実に増やす投資スタイルが向いています。新NISAを活用した積立投資や高配当株への投資は、大きな時間を取られずに資産を育てられます。「副業＝労働」ではなく「お金に働いてもらう」考え方で、将来の安定した収入源を作りましょう。',
+    steps: [
+      '楽天証券かSBI証券で口座開設（5分〜）',
+      '新NISAのつみたて投資枠でS&P500か全世界株式を月5,000円から',
+      '高配当ETF（VYM・HDVなど）を少額から購入してみる',
+      '配当金が入金されたら再投資ルールを決める',
+    ],
+    kindle: false,
+  },
+  E: {
+    id: 'E',
+    emoji: '🤖',
+    name: 'AI活用マスター型',
+    sub: 'AIツールで業務効率化→副業タイプ',
+    tags: ['#AI活用', '#ChatGPT', '#業務効率化', '#最先端', '#自動化'],
+    desc: 'あなたはAIツールをフル活用して圧倒的な生産性を生み出す副業が向いています。ChatGPT・Claude・Perplexityなどを駆使して、コンテンツ作成・データ分析・業務代行・AIコンサルなど多様な副業が可能。「AIを使いこなせる人」への需要は急増しており、今が参入の絶好のタイミングです。',
+    steps: [
+      'ChatGPT Plus（月20ドル）に課金して本格的に使い倒す',
+      'AI × 自分のスキル（文章・デザイン・分析など）を組み合わせる',
+      'ランサーズ・クラウドワークスに「AI代行」として出品する',
+      'noteにAI活用ノウハウを発信して認知度を上げる',
+    ],
+    kindle: false,
+  },
+};
+
+// ============================================================
+// QUESTIONS (6問)
+// ============================================================
+const QUESTIONS = [
+  {
+    text: '副業に使える時間は、週にどのくらいありますか？',
+    options: [
+      { emoji: '🕐', label: '週1〜3時間（スキマ時間だけ）', scores: { A: 1, D: 2 } },
+      { emoji: '🕓', label: '週3〜7時間（夜や休日に少し）', scores: { A: 2, B: 1, E: 1 } },
+      { emoji: '🕗', label: '週7〜15時間（けっこう確保できる）', scores: { B: 2, C: 1, E: 2 } },
+      { emoji: '🕙', label: '週15時間以上（本気でやりたい）', scores: { C: 3, B: 1, E: 1 } },
+    ],
+  },
+  {
+    text: 'あなたの「得意なこと・強み」に近いのはどれですか？',
+    options: [
+      { emoji: '✍️', label: '文章を書くこと・伝えること', scores: { A: 3, C: 1 } },
+      { emoji: '🎯', label: '専門スキル・資格・知識がある', scores: { B: 3, E: 1 } },
+      { emoji: '📣', label: '話すこと・人前での発信', scores: { C: 3 } },
+      { emoji: '🔢', label: '数字・データ・論理的思考', scores: { D: 3, E: 1 } },
+      { emoji: '⚡', label: '新しいツールやテクノロジーを使いこなす', scores: { E: 3, B: 1 } },
+    ],
+  },
+  {
+    text: '副業で一番大切にしたいことは何ですか？',
+    options: [
+      { emoji: '💤', label: '寝てても稼げる仕組みを作りたい', scores: { A: 3, D: 1 } },
+      { emoji: '💰', label: 'なるべく早く収入を得たい', scores: { B: 3, E: 1 } },
+      { emoji: '🌟', label: '自分のブランドや影響力を築きたい', scores: { C: 3, A: 1 } },
+      { emoji: '🛡️', label: '将来への安心・資産形成をしたい', scores: { D: 3 } },
+      { emoji: '🚀', label: '最先端技術を使って効率よく稼ぎたい', scores: { E: 3, B: 1 } },
+    ],
+  },
+  {
+    text: '人との関わりについて、どのタイプに近いですか？',
+    options: [
+      { emoji: '🏠', label: '一人で黙々と作業するのが好き', scores: { A: 2, D: 2 } },
+      { emoji: '💬', label: 'クライアントとのやり取りはOK', scores: { B: 3, E: 1 } },
+      { emoji: '🎤', label: 'たくさんの人に発信・影響を与えたい', scores: { C: 3 } },
+      { emoji: '🤖', label: 'AIと対話しながら作業するのが楽しい', scores: { E: 3, A: 1 } },
+    ],
+  },
+  {
+    text: '初期費用について、どのくらい出せますか？',
+    options: [
+      { emoji: '¥0', label: 'できれば0円〜無料で始めたい', scores: { A: 2, C: 2 } },
+      { emoji: '💴', label: '月3,000〜5,000円ならOK', scores: { B: 2, E: 2 } },
+      { emoji: '💵', label: '月1〜3万円くらいなら投資できる', scores: { D: 2, E: 1 } },
+      { emoji: '💳', label: '3〜10万円以上、本格的に投資したい', scores: { D: 3 } },
+    ],
+  },
+  {
+    text: 'AIツール（ChatGPTなど）についてどう思いますか？',
+    options: [
+      { emoji: '🔥', label: '積極的に活用したい！もっと使いたい', scores: { E: 3, A: 1 } },
+      { emoji: '😊', label: '便利だと思う、ある程度使っている', scores: { E: 1, B: 1, A: 1 } },
+      { emoji: '📝', label: '自分の手で地道に書く方が好き', scores: { A: 2, C: 1 } },
+      { emoji: '📊', label: 'どちらかというと投資・資産に興味がある', scores: { D: 2 } },
+    ],
+  },
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  screen: 'start',   // 'start' | 'question' | 'loading' | 'result'
+  current: 0,
+  answers: [],       // index of chosen option per question
+  scores: { A: 0, B: 0, C: 0, D: 0, E: 0 },
+};
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  const app = document.getElementById('app');
+  if (state.screen === 'start')    app.innerHTML = renderStart();
+  if (state.screen === 'question') app.innerHTML = renderQuestion();
+  if (state.screen === 'loading')  app.innerHTML = renderLoading();
+  if (state.screen === 'result')   app.innerHTML = renderResult();
+  attachEvents();
+}
+
+function renderStart() {
+  return `
+    <div class="start-screen">
+      <div class="header-emoji">✨</div>
+      <h1 class="header-title">あなたに合った副業タイプ診断</h1>
+      <p class="header-sub">6問に答えるだけで、あなたにぴったりの副業がわかる！</p>
+      <ul class="feature-list">
+        <li>所要時間：約1〜2分</li>
+        <li>5つのタイプから最適なものを診断</li>
+        <li>おすすめの「最初の一歩」もわかる</li>
+      </ul>
+      <button class="btn-primary" id="btn-start">診断スタート！</button>
+    </div>
+  `;
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.current];
+  const total = QUESTIONS.length;
+  const pct = Math.round((state.current / total) * 100);
+
+  return `
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>質問 ${state.current + 1} / ${total}</span>
+        <span>${pct}%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="question-num">Q ${state.current + 1}</div>
+    <div class="question-text">${q.text}</div>
+    <div class="options">
+      ${q.options.map((opt, i) => `
+        <button class="option-btn${state.answers[state.current] === i ? ' selected' : ''}" data-idx="${i}">
+          <span class="option-icon">${opt.emoji}</span>
+          <span>${opt.label}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderLoading() {
+  return `
+    <div class="loading">
+      <div class="loading-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <p class="loading-text">あなたのタイプを診断中…</p>
+    </div>
+  `;
+}
+
+function renderResult() {
+  const topId = getTopType();
+  const t = TYPES[topId];
+  const maxScore = Math.max(...Object.values(state.scores));
+
+  const scoreRows = Object.entries(TYPES).map(([id, type]) => {
+    const s = state.scores[id];
+    const pct = maxScore > 0 ? Math.round((s / maxScore) * 100) : 0;
+    return `
+      <div class="score-row">
+        <div class="score-type-name">${type.emoji} ${type.name.replace('型','')}</div>
+        <div class="score-bar"><div class="score-fill" style="width:${pct}%"></div></div>
+        <div class="score-pct">${pct}%</div>
+      </div>
+    `;
+  }).join('');
+
+  const kindleBlock = t.kindle ? `
+    <a class="kindle-link-box" href="https://example.com/kindle-start" target="_blank" rel="noopener">
+      <div class="kindle-text">
+        📖 Kindle出版の始め方はこちら →
+        <small>初心者でも1冊目から収益化する方法</small>
+      </div>
+      <span class="kindle-arrow">→</span>
+    </a>
+  ` : '';
+
+  return `
+    <div class="text-center">
+      <div class="result-badge">診断結果</div>
+      <div class="result-type-emoji">${t.emoji}</div>
+      <div class="result-type-name">${t.name}</div>
+      <div class="result-type-sub">${t.sub}</div>
+    </div>
+
+    <div class="tag-row">
+      ${t.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+    </div>
+
+    <div class="section-label">あなたについて</div>
+    <div class="result-desc">${t.desc}</div>
+
+    ${kindleBlock}
+
+    <div class="first-step">
+      <div class="first-step-title">🚀 おすすめの最初の一歩</div>
+      <ul>
+        ${t.steps.map(s => `<li>${s}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">タイプ別スコア</div>
+    <div class="score-section">${scoreRows}</div>
+
+    <button class="btn-primary" id="btn-retry" style="margin-bottom:10px">もう一度診断する</button>
+    <button class="btn-retry" id="btn-retry2">← 最初に戻る</button>
+  `;
+}
+
+// ============================================================
+// LOGIC
+// ============================================================
+function getTopType() {
+  return Object.entries(state.scores).sort((a, b) => b[1] - a[1])[0][0];
+}
+
+function applyAnswer(optionIndex) {
+  const q = QUESTIONS[state.current];
+  const opt = q.options[optionIndex];
+
+  // Remove old score if re-answering
+  if (state.answers[state.current] !== undefined) {
+    const old = q.options[state.answers[state.current]];
+    Object.entries(old.scores).forEach(([k, v]) => { state.scores[k] -= v; });
+  }
+
+  // Apply new score
+  Object.entries(opt.scores).forEach(([k, v]) => { state.scores[k] += v; });
+  state.answers[state.current] = optionIndex;
+
+  // Next question or show loading
+  if (state.current < QUESTIONS.length - 1) {
+    state.current++;
+    render();
+  } else {
+    state.screen = 'loading';
+    render();
+    setTimeout(() => {
+      state.screen = 'result';
+      render();
+    }, 1600);
+  }
+}
+
+function reset() {
+  state = {
+    screen: 'start',
+    current: 0,
+    answers: [],
+    scores: { A: 0, B: 0, C: 0, D: 0, E: 0 },
+  };
+  render();
+}
+
+// ============================================================
+// EVENTS
+// ============================================================
+function attachEvents() {
+  const startBtn = document.getElementById('btn-start');
+  if (startBtn) {
+    startBtn.addEventListener('click', () => {
+      state.screen = 'question';
+      render();
+    });
+  }
+
+  document.querySelectorAll('.option-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      applyAnswer(Number(btn.dataset.idx));
+    });
+  });
+
+  const retryBtn = document.getElementById('btn-retry');
+  if (retryBtn) retryBtn.addEventListener('click', reset);
+
+  const retryBtn2 = document.getElementById('btn-retry2');
+  if (retryBtn2) retryBtn2.addEventListener('click', reset);
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+render();
+</script>
+</body>
+</html>
